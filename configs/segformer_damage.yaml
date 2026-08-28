@@ -1,0 +1,42 @@
+seed: 42
+device: "cuda"
+
+dataset:
+  name: "xbd"
+  processed_dir: "data/processed/xbd"
+  image_size: 512
+  batch_size: 4
+  num_workers: 4
+  split_csv: "data/processed/xbd/metadata/splits_event_aware.csv"
+  mask_type: "damage_multiclass"
+
+task:
+  name: "damage_segmentation"
+  num_classes: 5
+  ignore_index: 255
+
+model:
+  name: "segformer"
+  model_name: "nvidia/segformer-b3-finetuned-ade-512-512"
+  num_labels: 5
+  in_channels: 6
+
+training:
+  epochs: 50
+  lr: 0.00006
+  weight_decay: 0.0001
+  mixed_precision: true
+  early_stopping_patience: 10
+  save_best_metric: "macro_f1"
+
+loss:
+  ce_weighted: true
+  dice_weight: 0.5
+  focal_weight: 0.3
+
+augmentation:
+  horizontal_flip: 0.5
+  vertical_flip: 0.5
+  rotate90: 0.5
+  brightness_contrast: 0.2
+  normalize: true

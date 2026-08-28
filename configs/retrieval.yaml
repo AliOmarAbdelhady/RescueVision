@@ -1,0 +1,9 @@
+# Retrieval system configuration
+backbone: "facebook/dinov2-base"
+image_dir: "data/processed/xbd/images/post"
+output_dir: "outputs/faiss"
+pattern: "*_post_disaster.png"
+metadata_csv: "data/processed/xbd/metadata/buildings.csv"
+batch_size: 16
+device: "cuda"
+top_k: 5

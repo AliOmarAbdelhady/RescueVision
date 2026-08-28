@@ -1,0 +1,15 @@
+{
+  "case_id": "d0dd4137",
+  "summary": {
+    "error": "No damage map available"
+  },
+  "artifacts": {
+    "building_mask": "/outputs/d0dd4137/building_mask.png",
+    "change_mask": "/outputs/d0dd4137/change_mask.png",
+    "damage_map": "/outputs/d0dd4137/damage_map.png",
+    "overlay_damage": "/outputs/d0dd4137/overlay_damage.png",
+    "overview": "/outputs/d0dd4137/overview.png",
+    "report_md": "/outputs/d0dd4137/report.md",
+    "report_pdf": "/outputs/d0dd4137/report.html"
+  }
+}

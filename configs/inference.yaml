@@ -1,0 +1,34 @@
+device: "cuda"
+image_size: 1024
+
+models:
+  building_seg:
+    checkpoint: "outputs/checkpoints/building_seg_unet_best.pt"
+    config: "configs/building_seg_unet.yaml"
+  damage_seg:
+    checkpoint: "outputs/checkpoints/damage_seg_unet_best.pt"
+    config: "configs/damage_seg_unet_6ch.yaml"
+  change_detection:
+    checkpoint: "outputs/checkpoints/change_siamese_unet_best.pt"
+    config: "configs/change_siamese_unet.yaml"
+  damage_classifier:
+    checkpoint: "outputs/checkpoints/dinov2_classifier_best.pt"
+    config: "configs/dinov2_damage_classifier.yaml"
+
+postprocess:
+  min_building_area: 100
+  fill_holes: true
+
+output:
+  save_masks: true
+  save_overlays: true
+  save_summary_json: true
+  save_report: true
+
+damage_color_map:
+  0: [0, 0, 0]
+  1: [0, 255, 0]
+  2: [255, 255, 0]
+  3: [255, 165, 0]
+  4: [255, 0, 0]
+  255: [128, 128, 128]

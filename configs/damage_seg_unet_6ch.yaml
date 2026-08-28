@@ -1,0 +1,43 @@
+seed: 42
+device: "cuda"
+
+dataset:
+  name: "xbd"
+  processed_dir: "data/processed/xbd"
+  mask_type: "damage_multiclass"
+  image_size: 512
+  batch_size: 4
+  num_workers: 2
+  split_csv: "data/processed/xbd/metadata/splits_event_aware.csv"
+
+model:
+  name: "unet"
+  encoder: "efficientnet-b3"
+  encoder_weights: "imagenet"
+  in_channels: 6
+  classes: 5
+  adapt_first_conv: true
+
+training:
+  epochs: 60
+  lr: 5.0e-5
+  weight_decay: 1.0e-5
+  scheduler: "cosine"
+  mixed_precision: true
+  early_stopping_patience: 10
+  save_best_metric: "macro_f1"
+  gradient_accumulation_steps: 2
+
+loss:
+  type: "weighted_ce_dice"
+  ce_weight: 0.5
+  dice_weight: 0.5
+  ignore_index: 255
+  compute_class_weights: true
+
+augmentation:
+  horizontal_flip: 0.5
+  vertical_flip: 0.5
+  rotate90: 0.5
+  brightness_contrast: 0.2
+  normalize: true

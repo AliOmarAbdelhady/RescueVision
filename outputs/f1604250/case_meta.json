@@ -1,0 +1,15 @@
+{
+  "case_id": "f1604250",
+  "summary": {
+    "error": "No damage map available"
+  },
+  "artifacts": {
+    "building_mask": "/outputs/f1604250/building_mask.png",
+    "change_mask": "/outputs/f1604250/change_mask.png",
+    "damage_map": "/outputs/f1604250/damage_map.png",
+    "overlay_damage": "/outputs/f1604250/overlay_damage.png",
+    "overview": "/outputs/f1604250/overview.png",
+    "report_md": "/outputs/f1604250/report.md",
+    "report_pdf": "/outputs/f1604250/report.html"
+  }
+}

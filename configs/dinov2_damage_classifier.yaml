@@ -1,0 +1,43 @@
+seed: 42
+device: "cuda"
+
+dataset:
+  name: "xbd_crops"
+  processed_dir: "data/processed/xbd"
+  crops_csv: "data/processed/xbd/metadata/buildings.csv"
+  split_csv: "data/processed/xbd/metadata/splits_event_aware.csv"
+  image_size: 224
+  batch_size: 32
+  num_workers: 2
+
+model:
+  name: "dinov2_classifier"
+  backbone: "facebook/dinov2-base"
+  num_classes: 4
+  freeze_backbone: true
+  unfreeze_after_epoch: 10
+  unfreeze_blocks: 4
+  mlp_hidden_dim: 512
+  dropout: 0.3
+
+training:
+  epochs: 25
+  lr: 1.0e-3
+  weight_decay: 1.0e-4
+  scheduler: "cosine"
+  mixed_precision: true
+  early_stopping_patience: 7
+  save_best_metric: "macro_f1"
+  stage2_lr: 1.0e-5
+
+loss:
+  type: "focal"
+  gamma: 2.0
+  compute_class_weights: true
+
+augmentation:
+  horizontal_flip: 0.5
+  vertical_flip: 0.5
+  rotate: 15
+  brightness_contrast: 0.2
+  normalize: true
