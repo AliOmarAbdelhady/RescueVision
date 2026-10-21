@@ -18,6 +18,8 @@ def init_service(outputs_root: str) -> None:
 
 def get_report(case_id: str) -> dict | None:
     """Retrieve report data for a case."""
+    if _outputs_root is None:
+        return None
     case_dir = _outputs_root / case_id
     if not case_dir.exists():
         return None
@@ -47,6 +49,8 @@ def get_report(case_id: str) -> dict | None:
 
 def generate_report_for_case(case_id: str) -> dict | None:
     """Generate a report from existing prediction results."""
+    if _outputs_root is None:
+        return None
     case_dir = _outputs_root / case_id
     meta_path = case_dir / "case_meta.json"
 

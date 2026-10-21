@@ -1,0 +1,9 @@
+node_modules/
+dist/
+build/
+.turbo/
+*.tsbuildinfo
+.env
+.env.local
+.expo/
+# generated API types ARE committed (packages/api/src/generated) for reviewable diffs

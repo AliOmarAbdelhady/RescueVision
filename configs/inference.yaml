@@ -1,13 +1,12 @@
 device: "cuda"
-image_size: 1024
+image_size: 512
 
 models:
-  building_seg:
-    checkpoint: "outputs/checkpoints/building_seg_unet_best.pt"
-    config: "configs/building_seg_unet.yaml"
-  damage_seg:
-    checkpoint: "outputs/checkpoints/damage_seg_unet_best.pt"
-    config: "configs/damage_seg_unet_6ch.yaml"
+  joint_damage:
+    checkpoint: "outputs/checkpoints/joint_damage_best.pt"
+    config: "configs/change_siamese_unet.yaml"
+    threshold: 0.75
+    input_size: 608
   change_detection:
     checkpoint: "outputs/checkpoints/change_siamese_unet_best.pt"
     config: "configs/change_siamese_unet.yaml"

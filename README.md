@@ -80,7 +80,6 @@ python scripts/run_inference.py \
 ```bash
 python scripts/export_report.py \
   --summary outputs/predictions/demo/emergency_summary.json \
-  --damage-map outputs/predictions/demo/damage_map.png \
   --out-dir outputs/reports
 ```
 
