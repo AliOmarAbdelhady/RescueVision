@@ -4,8 +4,25 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-PY=${PYTHON:-python3}
-"$PY" -c 'import sys; assert sys.version_info >= (3,10), "Python 3.10+ required (brew install python@3.11)"'
+# Pick the first Python >= 3.10 (macOS's built-in python3 is 3.9)
+PY=""
+for c in ${PYTHON:-} python3.12 python3.11 python3.10 \
+         /opt/homebrew/bin/python3.12 /opt/homebrew/bin/python3.11 /usr/local/bin/python3.11 python3; do
+  if command -v "$c" >/dev/null 2>&1 && "$c" -c 'import sys; sys.exit(sys.version_info < (3,10))' 2>/dev/null; then
+    PY="$c"; break
+  fi
+done
+if [ -z "$PY" ]; then
+  echo "No Python 3.10+ found. Install one, then re-run:"
+  echo "    brew install python@3.11"
+  exit 1
+fi
+echo "using $PY ($("$PY" --version))"
+
+# Recreate .venv if it was built with an old Python
+if [ -x .venv/bin/python ] && ! .venv/bin/python -c 'import sys; sys.exit(sys.version_info < (3,10))'; then
+  echo "removing old .venv (Python < 3.10)"; rm -rf .venv
+fi
 
 [ -d .venv ] || "$PY" -m venv .venv
 source .venv/bin/activate
