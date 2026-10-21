@@ -58,3 +58,10 @@ node_modules/
 
 sponsorship/
 outputs/
+# Mapping: large rasters stay local
+mapping/data/*.tif
+mapping/output/*.png
+mapping/output/*.aux.xml
+mapping/output/thumbs/
+!mapping/output/*.html
+!mapping/output/damage_overlay.png

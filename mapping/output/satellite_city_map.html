@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_6f92e6e0bab5810429577defa7711f3f {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+    
+            
+                <style>
+                    .leaflet-image-layer {
+                        /* old android/safari*/
+                        image-rendering: -webkit-optimize-contrast;
+                        image-rendering: crisp-edges; /* safari */
+                        image-rendering: pixelated; /* chrome */
+                        image-rendering: -moz-crisp-edges; /* firefox */
+                        image-rendering: -o-crisp-edges; /* opera */
+                        -ms-interpolation-mode: nearest-neighbor; /* ie */
+                    }
+                </style>
+            
+        
+    
+            
+                <style>
+                    .leaflet-image-layer {
+                        /* old android/safari*/
+                        image-rendering: -webkit-optimize-contrast;
+                        image-rendering: crisp-edges; /* safari */
+                        image-rendering: pixelated; /* chrome */
+                        image-rendering: -moz-crisp-edges; /* firefox */
+                        image-rendering: -o-crisp-edges; /* opera */
+                        -ms-interpolation-mode: nearest-neighbor; /* ie */
+                    }
+                </style>
+            
+        
+</head>
+<body>
+    
+    <style>.leaflet-container{background:#141414}</style>
+    
+<script>
+(function(){
+  function once(fn){ if(window.map) fn(); else setTimeout(()=>once(fn), 200); }
+  once(function(){
+    const layers = Object.values(map._layers).filter(l => l._url && l._url.includes('city_'));
+    const [before, after] = layers;
+    map.on('overlayadd', function(e){
+      if(e.layer===before) map.removeLayer(after);
+      if(e.layer===after)  map.removeLayer(before);
+    });
+  });
+})();
+</script>
+    
+<div style="position:fixed;bottom:22px;right:12px;z-index:9999;display:flex;gap:8px">
+  <a href="city_before.png" target="_blank"
+     style="background:#111d;color:#eee;padding:8px 12px;border-radius:8px;
+            font-family:sans-serif;font-size:13px;text-decoration:none;border:1px solid #444">
+     &#x26F6; full view — BEFORE</a>
+  <a href="city_after.png" target="_blank"
+     style="background:#111d;color:#eee;padding:8px 12px;border-radius:8px;
+            font-family:sans-serif;font-size:13px;text-decoration:none;border:1px solid #444">
+     &#x26F6; full view — AFTER</a>
+</div>
+    
+<div style="position:fixed;bottom:22px;left:12px;z-index:9999;background:#ffffffee;
+     border-radius:8px;padding:10px 14px;font-family:sans-serif;font-size:13px;
+     box-shadow:0 1px 6px rgba(0,0,0,.35);line-height:1.55">
+  <b>Legend</b><br>
+  <span style="display:inline-block;width:12px;height:12px;background:#e3342f;
+       opacity:.6;border:1px solid #e3342f;border-radius:2px"></span> destroyed&nbsp;
+  <span style="display:inline-block;width:12px;height:12px;background:#f39c12;
+       opacity:.6;border:1px solid #f39c12;border-radius:2px"></span> major&nbsp;
+  <span style="display:inline-block;width:12px;height:12px;background:#f7e04b;
+       opacity:.6;border:1px solid #c9b437;border-radius:2px"></span> minor<br>
+  <span style="display:inline-block;width:12px;height:12px;background:#00bcd4;
+       border-radius:50%"></span> entry route&nbsp;
+  <span style="display:inline-block;width:12px;height:12px;background:#00c853;
+       border-radius:50%"></span> exit route<br>
+  <span style="color:#888">damage classes &amp; routes fill in as AI modules run</span>
+</div>
+    
+<div style="position:fixed;top:10px;left:50px;z-index:9999;background:#111d;
+     color:#eee;padding:9px 16px;border-radius:8px;font-family:sans-serif;font-size:14px">
+  <b>Kahramanmaras city center — Turkiye earthquake 23 · SAR grad project</b><br>
+  <span style="font-size:12px;color:#bbb">imagery: Maxar Open Data · 0.5 m/px · ~0.8 x 0.8 km ·
+  toggle BEFORE / AFTER in the layers panel<br>
+  views: <a href="satellite_city_map.html" style="color:#7cc0ff">single map</a> ·
+  <a href="compare.html" style="color:#7cc0ff">side-by-side compare</a> ·
+  <a href="process.html" style="color:#7cc0ff">process</a> ·
+  <a href="dataset.html" style="color:#7cc0ff">original dataset</a></span>
+</div>
+    
+            <div class="folium-map" id="map_6f92e6e0bab5810429577defa7711f3f" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_6f92e6e0bab5810429577defa7711f3f = L.map(
+                "map_6f92e6e0bab5810429577defa7711f3f",
+                {
+                    center: [37.5760008, 36.9219971],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "maxBounds": [
+[
+-90,
+-180,
+],
+[
+90,
+180,
+],
+],
+  "zoom": 17,
+  "zoomControl": true,
+  "preferCanvas": false,
+  "noWrap": true,
+}
+
+                }
+            );
+            L.control.scale().addTo(map_6f92e6e0bab5810429577defa7711f3f);
+
+            
+
+        
+    
+            var image_overlay_40d0c4f49599b3fe0653edd77160e073 = L.imageOverlay(
+                "city_before.png",
+                [[37.5724036, 36.917479], [37.579598, 36.9265152]],
+                {
+  "opacity": 1.0,
+  "zIndex": 50,
+}
+            );
+        
+    
+            var image_overlay_36f646f9bf84931d43d79eb6c37eab86 = L.imageOverlay(
+                "city_after.png",
+                [[37.5724036, 36.917479], [37.579598, 36.9265152]],
+                {
+  "opacity": 1.0,
+  "zIndex": 100,
+}
+            );
+        
+    
+            image_overlay_36f646f9bf84931d43d79eb6c37eab86.addTo(map_6f92e6e0bab5810429577defa7711f3f);
+        
+    
+            var layer_control_6bdc95eda10423954e1d7eb17b2945ea_layers = {
+                base_layers : {
+                },
+                overlays :  {
+                    "BEFORE \u2014 26 Jul 2022 (Maxar)" : image_overlay_40d0c4f49599b3fe0653edd77160e073,
+                    "AFTER \u2014 28 Feb 2023, 22 days post-earthquake (Maxar)" : image_overlay_36f646f9bf84931d43d79eb6c37eab86,
+                },
+            };
+            let layer_control_6bdc95eda10423954e1d7eb17b2945ea = L.control.layers(
+                layer_control_6bdc95eda10423954e1d7eb17b2945ea_layers.base_layers,
+                layer_control_6bdc95eda10423954e1d7eb17b2945ea_layers.overlays,
+                {
+  "position": "topright",
+  "collapsed": false,
+  "autoZIndex": true,
+}
+            ).addTo(map_6f92e6e0bab5810429577defa7711f3f);
+
+        
+</script>
+</html>

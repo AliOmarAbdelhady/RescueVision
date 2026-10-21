@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Process — from collected images to a 2D map</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  html,body{margin:0;height:100%;background:#141414;color:#ddd;font-family:sans-serif}
+  #top{background:#111;padding:8px 12px;font-size:13px}
+  #top a{color:#7cc0ff;margin-right:14px;text-decoration:none}
+  #steps{display:flex;gap:10px;align-items:center;background:#1b1b1b;padding:8px 12px;
+         border-bottom:1px solid #2c2c2c;flex-wrap:wrap}
+  .step{padding:5px 12px;border-radius:6px;background:#2a2a2a;color:#888;font-size:12px}
+  .step.active{background:#0a84ff;color:#fff}
+  .step.done{background:#1f7a34;color:#dff5e3}
+  #play{background:#e39b26;border:0;color:#221a05;font-weight:700;padding:7px 18px;
+        border-radius:6px;font-size:13px;cursor:pointer}
+  #cov{margin-left:auto;font-size:12px;color:#9ad}
+  #main{display:flex;height:calc(100% - 96px)}
+  #map{flex:1}
+  #cards{width:190px;background:#181818;overflow-y:auto;padding:8px}
+  .card{background:#222;border-radius:8px;margin-bottom:8px;padding:6px;font-size:11px;color:#aaa}
+  .card img{width:100%;border-radius:4px;display:block}
+  .card .st{float:right}
+  .card.placed{outline:2px solid #1f7a34}
+  .card.placed .st{color:#6fe08a}
+  #final{position:absolute;right:14px;top:104px;z-index:1000;display:none;gap:6px}
+  #final button{background:#2a2a2a;color:#bbb;border:1px solid #444;border-radius:6px;
+                padding:6px 12px;font-size:12px;cursor:pointer}
+  #final button.on{background:#0a84ff;color:#fff;border-color:#0a84ff}
+  #note{position:absolute;left:14px;bottom:26px;z-index:1000;background:#111d;color:#bbb;
+        padding:6px 10px;border-radius:6px;font-size:11px}
+  .leaflet-container{background:#101010}
+  @media (max-width:760px){#main{flex-direction:column}#cards{width:auto;display:flex;
+        overflow-x:auto;gap:8px}.card{min-width:130px;margin:0}}
+</style>
+</head>
+<body>
+<div id="top">
+  <a href="satellite_city_map.html">single map</a><a href="compare.html">compare</a>
+  <a href="dataset.html">original dataset</a><a href="process.html"><b>process</b></a>
+</div>
+<div id="steps">
+  <span class="step" id="s1">1 COLLECT 0/16</span>
+  <span class="step" id="s2">2 ASSEMBLE</span>
+  <span class="step" id="s3">3 FINAL MAP</span>
+  <button id="play">▶ PLAY</button>
+  <span id="cov">coverage 0%</span>
+</div>
+<div id="main">
+  <div style="position:relative;flex:1;display:flex">
+    <div id="map"></div>
+    <div id="final">
+      <button id="bBefore">BEFORE</button>
+      <button id="bAfter" class="on">AFTER</button>
+      <button id="bDmg">+ GENERATED</button>
+      <button id="bReplay">↺ replay</button>
+    </div>
+    <div id="note">images: Maxar Open Data · 28 Feb 2023 pass · 0.5 m/px</div>
+  </div>
+  <div id="cards"></div>
+</div>
+<script>
+const SCENES = [{"quad": "031131233321", "bounds": [[37.61402686236891, 37.01417846543268], [37.66288050175053, 37.07561209296414]], "center": [37.63845368205972, 37.044895279198414], "thumb": "thumbs/2023-02-28_031131233321_10300100E3154100.png", "clouds": 0}, {"quad": "031131233320", "bounds": [[37.61306074197005, 36.95752390219796], [37.6619416132182, 37.01899097920898]], "center": [37.637501177594125, 36.98825744070347], "thumb": "thumbs/2023-02-28_031131233320_10300100E3154100.png", "clouds": 0}, {"quad": "031131233231", "bounds": [[37.61206748032649, 36.9008720878013], [37.66097553260204, 36.96237252683974]], "center": [37.63652150646426, 36.93162230732052], "thumb": "thumbs/2023-02-28_031131233231_10300100E3154100.png", "clouds": 2}, {"quad": "031131233230", "bounds": [[37.61172703472939, 36.88316175780263], [37.6599822639086, 36.9057568116911]], "center": [37.635854649319, 36.894459284746866], "thumb": "thumbs/2023-02-28_031131233230_10300100E3154100.png", "clouds": 0}, {"quad": "031131233323", "bounds": [[37.56898631583886, 37.015377402230854], [37.61783874436936, 37.076771993296695]], "center": [37.59341253010411, 37.04607469776377], "thumb": "thumbs/2023-02-28_031131233323_10300100E3154100.png", "clouds": 1}, {"quad": "031131233322", "bounds": [[37.56802175549607, 36.9587569869871], [37.61690137127178, 37.020184953611924]], "center": [37.59246156338392, 36.98947097029951], "thumb": "thumbs/2023-02-28_031131233322_10300100E3154100.png", "clouds": 0}, {"quad": "031131233233", "bounds": [[37.567030097693625, 36.902139314106755], [37.61593684994098, 36.96360056905198]], "center": [37.591483473817306, 36.93286994157937], "thumb": "thumbs/2023-02-28_031131233233_10300100E3154100.png", "clouds": 1}, {"quad": "031131233232", "bounds": [[37.56664380330696, 36.88185092267069], [37.61494518437365, 36.907018915273646]], "center": [37.590794493840306, 36.894434918972166], "thumb": "thumbs/2023-02-28_031131233232_10300100E3154100.png", "clouds": 0}, {"quad": "031133011101", "bounds": [[37.52394539236659, 37.01657367250628], [37.57279661171338, 37.0779293141799]], "center": [37.548371002039985, 37.04725149334309], "thumb": "thumbs/2023-02-28_031133011101_10300100E3154100.png", "clouds": 4}, {"quad": "031133011100", "bounds": [[37.52298239023151, 36.95998732940897], [37.57186075225171, 37.02137627288632]], "center": [37.547421571241614, 36.990681801147645], "thumb": "thumbs/2023-02-28_031133011100_10300100E3154100.png", "clouds": 0}, {"quad": "031133011011", "bounds": [[37.5219923343702, 36.90340372222353], [37.57089778835555, 36.96482588047878]], "center": [37.546445061362874, 36.93411480135116], "thumb": "thumbs/2023-02-28_031133011011_10300100E3154100.png", "clouds": 0}, {"quad": "031133011010", "bounds": [[37.52157496570434, 36.881358304669035], [37.56990772401182, 36.9082782124368]], "center": [37.54574134485808, 36.89481825855292], "thumb": "thumbs/2023-02-28_031133011010_10300100E3154100.png", "clouds": 0}, {"quad": "031133011103", "bounds": [[37.478904092183804, 37.0177672825326], [37.52775410400826, 37.0790840616752]], "center": [37.50332909809603, 37.0484256721039], "thumb": "thumbs/2023-02-28_031133011103_10300100E3154100.png", "clouds": 5}, {"quad": "031133011102", "bounds": [[37.47794264641338, 36.96121493591515], [37.52681975638877, 37.02256494327098]], "center": [37.50238120140108, 36.991889939593065], "thumb": "thumbs/2023-02-28_031133011102_10300100E3154100.png", "clouds": 0}, {"quad": "031133011013", "bounds": [[37.47695419059859, 36.904665318781], [37.52585834808184, 36.96604846753622]], "center": [37.501406269340215, 36.93535689315861], "thumb": "thumbs/2023-02-28_031133011013_10300100E3154100.png", "clouds": 0}, {"quad": "031133011012", "bounds": [[37.476509102917596, 36.88104778024726], [37.524869883064554, 36.9095347097738]], "center": [37.50068949299107, 36.895291245010526], "thumb": "thumbs/2023-02-28_031133011012_10300100E3154100.png", "clouds": 0}];
+const CITY = [[37.5724036, 36.917479], [37.579598, 36.9265152]];
+const UNION = [[37.476509102917596, 36.88104778024726], [37.66288050175053, 37.0790840616752]];
+const CUM = [8, 16, 24, 26, 34, 41, 48, 51, 58, 65, 72, 75, 83, 90, 97, 100];
+
+const map = L.map('map', {minZoom: 10, maxZoom: 19});
+map.fitBounds(UNION);
+L.control.scale({imperial:false}).addTo(map);
+
+const cards = document.getElementById('cards');
+SCENES.forEach((s, i) => {
+  const d = document.createElement('div');
+  d.className = 'card'; d.id = 'card' + i;
+  d.innerHTML = '<span class="st">waiting</span><b>image ' + (i+1) + '</b><br>' +
+    'tile ' + s.quad.slice(-3) + ' · clouds ' + s.clouds + '%<br>' +
+    '<img src="' + s.thumb + '">';
+  cards.appendChild(d);
+});
+
+let placed = [];
+function place(i) {
+  const s = SCENES[i];
+  const ov = L.imageOverlay(s.thumb, s.bounds, {opacity: 0}).addTo(map);
+  let o = 0;
+  const t = setInterval(() => { o += 0.08; if (o >= 1) {o = 1; clearInterval(t);} ov.setOpacity(o); }, 30);
+  placed.push(s);
+  const c = document.getElementById('card' + i);
+  c.classList.add('placed'); c.querySelector('.st').textContent = 'placed ✓';
+  document.getElementById('s1').textContent = '1 COLLECT ' + (i+1) + '/' + SCENES.length;
+  document.getElementById('s1').classList.add('active');
+  document.getElementById('cov').textContent = 'coverage ' + CUM[i] + '%';
+}
+
+let playing = false;
+async function play() {
+  if (playing) return; playing = true;
+  document.getElementById('play').disabled = true;
+  for (let i = 0; i < SCENES.length; i++) {
+    const s = SCENES[i];
+    map.flyToBounds(s.bounds, {duration: 1.1, padding: [30, 30]});
+    await new Promise(r => setTimeout(r, 1250));
+    place(i);
+    await new Promise(r => setTimeout(r, 550));
+  }
+  document.getElementById('s1').classList.remove('active');
+  document.getElementById('s1').classList.add('done');
+  document.getElementById('s2').classList.remove('active');
+  document.getElementById('s2').classList.add('done');
+  // zoom to the city and fade in the high-res final map
+  document.getElementById('s3').classList.add('active');
+  map.flyToBounds(CITY, {duration: 1.6, padding: [20, 20]});
+  await new Promise(r => setTimeout(r, 1800));
+  hi = L.imageOverlay('city_after.png', CITY, {opacity: 0}).addTo(map);
+  let o = 0;
+  const t = setInterval(() => { o += 0.05; if (o >= 1) {o = 1; clearInterval(t);} hi.setOpacity(o); }, 40);
+  await new Promise(r => setTimeout(r, 900));
+  document.getElementById('s3').classList.remove('active');
+  document.getElementById('s3').classList.add('done');
+  document.getElementById('final').style.display = 'flex';
+}
+
+let hi = null, hiDmg = null;
+const bB = document.getElementById('bBefore'), bA = document.getElementById('bAfter'),
+      bD = document.getElementById('bDmg');
+function setHi(which) {
+  if (hi) map.removeLayer(hi);
+  hi = L.imageOverlay(which === 'before' ? 'city_before.png' : 'city_after.png', CITY).addTo(map);
+  bB.classList.toggle('on', which === 'before');
+  bA.classList.toggle('on', which !== 'before');
+}
+bB.onclick = () => setHi('before');
+bA.onclick = () => setHi('after');
+bD.onclick = () => {
+  if (hiDmg && map.hasLayer(hiDmg)) { map.removeLayer(hiDmg); bD.classList.remove('on'); }
+  else { hiDmg = L.imageOverlay('damage_overlay.png', CITY).addTo(map); bD.classList.add('on'); }
+};
+document.getElementById('bReplay').onclick = () => location.reload();
+document.getElementById('play').onclick = play;
+if (location.search.includes('autostart')) setTimeout(play, 400);
+</script>
+</body>
+</html>

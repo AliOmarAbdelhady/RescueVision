@@ -1,0 +1,5 @@
+folium>=0.20
+pyarrow>=21.0
+numpy>=2.0
+Pillow>=11.0
+# CLI: gdal_translate (GDAL) is used to fetch thumbnails from the Maxar bucket
