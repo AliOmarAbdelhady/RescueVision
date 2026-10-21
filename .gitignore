@@ -37,8 +37,13 @@ outputs/faiss/
 # Jupyter
 .ipynb_checkpoints/
 
-# Environment
+# Environment / secrets
 .env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
 
 # OS
 .DS_Store
@@ -55,6 +60,11 @@ kaggle.json
 
 # Node
 node_modules/
+.turbo/
+.expo/
+*.tsbuildinfo
+npm-debug.log*
+pnpm-debug.log*
 
 sponsorship/
 outputs/
@@ -65,3 +75,14 @@ mapping/output/*.aux.xml
 mapping/output/thumbs/
 !mapping/output/*.html
 !mapping/output/damage_overlay.png
+
+# Large geospatial rasters (keep local)
+*.tif
+*.tiff
+
+# Tooling caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
