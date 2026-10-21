@@ -6,8 +6,9 @@ cd "$(dirname "$0")/.."
 
 # Pick the first Python >= 3.10 (macOS's built-in python3 is 3.9)
 PY=""
-for c in ${PYTHON:-} python3.12 python3.11 python3.10 \
-         /opt/homebrew/bin/python3.12 /opt/homebrew/bin/python3.11 /usr/local/bin/python3.11 python3; do
+for c in ${PYTHON:-} python3.13 python3.12 python3.11 python3.10 \
+         /opt/homebrew/bin/python3 /usr/local/bin/python3 \
+         /opt/homebrew/bin/python3.1[0-9] /usr/local/bin/python3.1[0-9] python3; do
   if command -v "$c" >/dev/null 2>&1 && "$c" -c 'import sys; sys.exit(sys.version_info < (3,10))' 2>/dev/null; then
     PY="$c"; break
   fi
