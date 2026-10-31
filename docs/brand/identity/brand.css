@@ -1,0 +1,17 @@
+/* Rescue Vision — brand tokens */
+:root {
+  --rv-deep-night:  #050810;
+  --rv-navy:        #080E1A;  /* primary dark background */
+  --rv-midnight:    #0D1626;
+  --rv-panel:       #152138;
+  --rv-signal-cyan: #00E5FF;  /* accent / interface */
+  --rv-rescue-amber:#FF8C1A;  /* accent / alert */
+  --rv-white:       #FFFFFF;
+  --rv-steel:       #8EA8C0;  /* "VISION" on dark, secondary text */
+  --rv-steel-tag:   #9EB4CA;  /* tagline on dark */
+  --rv-light-bg:    #ECEEF2;  /* light theme background */
+  --rv-ink:         #1A2538;  /* light theme text */
+  --rv-slate:       #5C7A96;  /* "VISION" and tagline on light */
+  --rv-font-display: 'Oswald', 'Arial Narrow', sans-serif;  /* 700 titles, 500 tagline */
+  --rv-font-mono:    'JetBrains Mono', monospace;           /* 500 tags */
+}
